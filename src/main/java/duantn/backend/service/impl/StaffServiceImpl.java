@@ -117,8 +117,7 @@ public class StaffServiceImpl implements StaffService {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         List<Staff> staffList;
-        if (page != null && limit != null) {
-            Page<Staff> pages = staffRepository.findByNameLikeOrEmailLikeOrPhoneLikeAndDeletedFalse
+        if (page != null && limit != null) { Page<Staff> pages = staffRepository.findByNameLikeOrEmailLikeOrPhoneLikeAndDeletedFalse
                     ("%" + search + "%", "%" + search + "%", "%" + search + "%",
                             PageRequest.of(page, limit));
             staffList=pages.toList();

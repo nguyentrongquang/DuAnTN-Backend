@@ -51,4 +51,29 @@ public class ArtcleManage {
     public ResponseEntity<?> findbyID(@PathVariable Integer id) {
         return service.findOneArticle(id);
     }
+
+    @GetMapping(value = "articles", params = "search")
+    public List<ArticleOutputDTO> findbyTileAndPhone(@RequestParam String search,
+                                                     @RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) Integer limit) {
+        return service.findArticleByTitleAndPhone(search, page, limit);
+    }
+
+    @GetMapping(value = "articles", params = "post-time-desc")
+    public List<ArticleOutputDTO> findbyPostTimeDESC(@RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) Integer limit) {
+        return service.findArticleByPostTimeDESC(page, limit);
+    }
+
+    @GetMapping(value = "articles", params = "post-time-asc")
+    public List<ArticleOutputDTO> finbyArticleAsc(@RequestParam(required = false) Integer page,
+                                                  @RequestParam(required = false) Integer limit){
+        return  service.findArticleByPostTimeAsc(page, limit);
+    }
+    @GetMapping("articles/status-true")
+    public List<ArticleOutputDTO> listArticleStatusTrue(@RequestParam(required = false) Integer page,
+                                                        @RequestParam(required = false) Integer limit){
+        return service.ListAriticleStatusTrue(page, limit);
+    }
+
 }

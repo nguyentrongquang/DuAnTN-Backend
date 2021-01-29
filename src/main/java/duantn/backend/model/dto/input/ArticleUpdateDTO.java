@@ -1,6 +1,6 @@
 package duantn.backend.model.dto.input;
 
-import duantn.backend.service.DateHeper;
+import duantn.backend.model.entity.DateHeper;
 import lombok.Getter;
 import lombok.Setter;
 

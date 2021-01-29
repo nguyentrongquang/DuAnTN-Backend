@@ -1,10 +1,11 @@
 package duantn.backend.model.dto.input;
 
 
-import duantn.backend.service.DateHeper;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.Date;
+
 @Setter
 @Getter
 public class ArticleInsertDTO {
@@ -16,7 +17,7 @@ public class ArticleInsertDTO {
     private String description;
     private String phone;
     private Boolean status;
-//    private Date postTime= DateHeper.now();
+    //   private Date postTime= DateHeper.now();
     private Date expiryDate;
     private boolean isVip;
 

@@ -10,9 +10,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class BaseEntity {
-
     private boolean deleted =false;
-
     private Date timeCreated=new Date();
-
 }

@@ -4,8 +4,9 @@ import duantn.backend.dao.ArticleReponsitory;
 import duantn.backend.model.dto.input.ArticleInsertDTO;
 import duantn.backend.model.dto.input.ArticleUpdateDTO;
 import duantn.backend.model.dto.output.ArticleOutputDTO;
-import duantn.backend.model.dto.output.StaffOutputDTO;
+
 import duantn.backend.model.entity.Article;
+import duantn.backend.model.entity.Staff;
 import duantn.backend.service.ArticleService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -27,7 +28,8 @@ public class ArticleServicelmpl implements ArticleService {
     public ArticleServicelmpl(ArticleReponsitory reponsitory) {
         this.reponsitory = reponsitory;
     }
-    private  SimpleDateFormat DATE_FORMATER = new SimpleDateFormat("yyyy/mm/dd");
+
+    private SimpleDateFormat DATE_FORMATER = new SimpleDateFormat("yyyy/mm/dd");
 
     @Override
     public List<ArticleOutputDTO> listArticle(Integer page, Integer limit) {
@@ -50,11 +52,11 @@ public class ArticleServicelmpl implements ArticleService {
     @Override
     public ResponseEntity<?> insertArticle(ArticleInsertDTO articleInsertDTO) {
         try {
+
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration()
                     .setMatchingStrategy(MatchingStrategies.STRICT);
             Article article = modelMapper.map(articleInsertDTO, Article.class);
-//            article.set(sdf.parse(staffInsertDTO.getBirthday()));
             Article newArticle = reponsitory.save(article);
             return ResponseEntity.ok(modelMapper.map(newArticle, ArticleOutputDTO.class));
         } catch (Exception e) {
@@ -62,6 +64,7 @@ public class ArticleServicelmpl implements ArticleService {
             return ResponseEntity.badRequest().body("Insert failed");
         }
     }
+
     @Override
     public ResponseEntity<?> updateArticle(ArticleUpdateDTO articleUpdateDTO) {
         try {
@@ -89,10 +92,10 @@ public class ArticleServicelmpl implements ArticleService {
 
     @Override
     public ResponseEntity<String> activeArticle(Integer id) {
-        Optional<Article> articles =  reponsitory.findById(id);
-        if(!articles.isPresent()){
-            return  ResponseEntity.badRequest().body("id"+id+" không tồm tại");
-        }else {
+        Optional<Article> articles = reponsitory.findById(id);
+        if (!articles.isPresent()) {
+            return ResponseEntity.badRequest().body("id" + id + " không tồm tại");
+        } else {
             articles.get().setDeleted(false);
             reponsitory.save(articles.get());
         }
@@ -112,6 +115,75 @@ public class ArticleServicelmpl implements ArticleService {
         }
     }
 
+    @Override
+    public List<ArticleOutputDTO> findArticleByTitleAndPhone(String search, Integer page, Integer limit) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Article> articleList;
+        if (page != null && limit != null) {
+            Page<Article> pages = reponsitory.findByTitleLikeOrPhoneAndDeletedFalse
+                    ("%" + search + "%", "%" + search + "%", PageRequest.of(page, limit));
+            articleList = pages.toList();
+        } else articleList = reponsitory.findByTitleLikeOrPhoneAndDeletedFalse
+                ("%" + search + "%", "%" + search + "%");
+        List<ArticleOutputDTO> ArticleOutputDTO = new ArrayList<>();
+        for (Article article : articleList) {
+            ArticleOutputDTO.add(modelMapper.map(article, ArticleOutputDTO.class));
+        }
+        return ArticleOutputDTO;
+    }
+
+    @Override
+    public List<ArticleOutputDTO> findArticleByPostTimeDESC(Integer page, Integer limit) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Article> articleList;
+        if (page != null && limit != null) {
+            Page<Article> pages = reponsitory.findByDeletedFalseOrderByPostTimeDesc(PageRequest.of(page, limit));
+            articleList = pages.toList();
+        } else
+            articleList = reponsitory.findByDeletedFalseOrderByPostTimeDesc();
+        List<ArticleOutputDTO> articleOutputDTO = new ArrayList<>();
+        for (Article article : articleList) {
+            articleOutputDTO.add(modelMapper.map(article, ArticleOutputDTO.class));
+        }
+        return articleOutputDTO;
+    }
+
+    @Override
+    public List<ArticleOutputDTO> findArticleByPostTimeAsc(Integer page, Integer limit) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Article> articleList;
+        if (page != null && limit != null) {
+            Page<Article> pages = reponsitory.findByDeletedFalseOrderByPostTimeAsc(PageRequest.of(page, limit));
+            articleList = pages.toList();
+        } else
+            articleList = reponsitory.findByDeletedFalseOrderByPostTimeAsc();
+        List<ArticleOutputDTO> articleOutputDTOS = new ArrayList<>();
+        for (Article article : articleList) {
+            articleOutputDTOS.add(modelMapper.map(article, ArticleOutputDTO.class));
+        }
+        return articleOutputDTOS;
+    }
+
+    @Override
+    public List<ArticleOutputDTO> ListAriticleStatusTrue(Integer page, Integer limit) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Article> articleList;
+        if(page != null && limit != null){
+            Page<Article> pages = reponsitory.findByDeletedTrue(PageRequest.of(page,limit));
+            articleList= pages.toList();
+        }else
+            articleList = reponsitory.findByDeletedTrue();
+        List<ArticleOutputDTO> articleOutputDTOS = new ArrayList<>();
+        for (Article article: articleList){
+            articleOutputDTOS.add(modelMapper.map(article,ArticleOutputDTO.class));
+        }
+        return articleOutputDTOS;
+    }
 
 
 }
